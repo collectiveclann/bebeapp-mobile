@@ -3,10 +3,12 @@ import {
   View,
   StyleSheet,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
   Platform,
   Keyboard,
   Dimensions,
   Animated,
+  ActionSheetIOS,
   Easing,
 } from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -25,6 +27,9 @@ import CalculateImage from './CalculateImage';
 import {SCREEN_WIDTH} from '../../assets/constants';
 // import {AppLogoLaunch} from '../../assets/icons';
 
+import moment from 'moment';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+
 const styles = StyleSheet.create({
   termsButton: {
     justifyContent: 'center',
@@ -35,9 +40,38 @@ const styles = StyleSheet.create({
   },
 });
 
+
 function CalculateScreen({route, navigation}) {
   const [phone, setPhone] = React.useState();
   const [loading, setLoading] = React.useState(false);
+  const [method, setMethod] = React.useState('Bir Yöntem Seçin');
+  const [date, setDate] = React.useState(new Date());
+  const [dateSelected, setDateSelected] = React.useState(false);
+  
+  // MARK: - DateTimePickerModal
+  const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const cancelDatePicker = () => {
+    setDateSelected(false);
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date) => {
+    setDateSelected(true);
+    setDate(date);
+    hideDatePicker();
+  };
+
+  moment.locale('tr');
+  // MARK: - DateTimePickerModal
 
   const logoValue = new Animated.Value(0);
 
@@ -57,6 +91,37 @@ function CalculateScreen({route, navigation}) {
     };
   });
 
+  const handleNavigationButton = () => {
+    console.log('xxxxx');
+  };
+
+  onFocus = () => {
+    handleMethodButton()
+    // do something
+  }
+
+  const handleMethodButton = () => {
+    if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: ['Kapat', 'Hamile Kaldığım Tarih'],
+          cancelButtonIndex: 0,
+        },
+        (buttonIndex) => {
+          if (buttonIndex === 0) {
+            // Keyboard.dismiss();
+            setMethod('Bir Yöntem Seçin'); 
+          } else if (buttonIndex === 1) {
+            setMethod('Hamile Kaldığım gün'); 
+            // Keyboard.dismiss();
+          } 
+        },
+      );
+    } else {
+      
+    }
+  };
+  
   const keyboardDidShow = (e) => {
     Animated.timing(logoValue, {
       toValue: 1,
@@ -139,27 +204,45 @@ function CalculateScreen({route, navigation}) {
               Doğum Yapacağınız Tarihi Hesaplayın
             </LabelComponent>
 
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss()}>
             <InputComponent
               icon="heart"
-              placeholder="Bir Yöntem Seçin"
-              keyboardType="email-address"
+              placeholder={method}
               textContentType="emailAddress"
               autoCompleteType="email"
               mt={20}
+              onFocus={handleMethodButton}
+              onKeyPress={Keyboard.dismiss()}
               // value={eMail}
               // onChangeText={setEMail}
             />
+            </TouchableWithoutFeedback>
+            
 
             <InputComponent
               icon="message-circle"
-              placeholder="E-posta Adresi"
+              placeholder= {dateSelected ? moment(date).format('DD MMM YYYY') : "Tarih Seçin"}
               keyboardType="email-address"
               textContentType="emailAddress"
               autoCompleteType="email"
               mt={20}
+              onFocus={showDatePicker}
+              onKeyPress={Keyboard.dismiss()}
+              // onFocus = {this.showPicker.bind(this, 'simple', { date: this.state.simpleDate })}
               // value={eMail}
               // onChangeText={setEMail}
             />
+            
+            <DateTimePickerModal
+              headerTextIOS="Tarih Seçin"
+              cancelTextIOS="Vazgeç"
+              confirmTextIOS="Seç"
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={cancelDatePicker}
+            />
+
           </View>
 
           <ButtonComponent
