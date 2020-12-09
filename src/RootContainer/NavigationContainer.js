@@ -6,6 +6,8 @@ import HomeScreen from './Home/HomeScreen';
 import CalculateScreen from './Calculate/CalculateScreen';
 import DetailScreen from './Detail/DetailScreen';
 
+import {AlertScreen} from '../assets/screens';
+
 import {NavigationOptions} from '../utilities';
 
 const Stack = createStackNavigator();
@@ -101,42 +103,6 @@ function Container() {
         })}
       />
 
-      {/* <Stack.Screen
-        name="MenuSelectScreen"
-        component={MenuSelectScreen}
-        options={() => ({
-          ...NavigationOptions({animationStyle: 'modal'}),
-        })}
-      />
-
-      <Stack.Screen name="SigninContainer" component={SigninContainer} />
-
-      <Stack.Screen
-        name="SigninAlertScreen"
-        component={SigninAlertScreen}
-        options={() => ({
-          ...NavigationOptions({animationStyle: 'modal'}),
-        })}
-      />
-
-      <Stack.Screen name="ProfileContainer" component={ProfileContainer} />
-
-      <Stack.Screen
-        name="NotificationContainer"
-        component={NotificationContainer}
-      />
-
-      <Stack.Screen name="SearchContainer" component={SearchContainer} />
-
-      <Stack.Screen name="LocationContainer" component={LocationContainer} />
-
-      <Stack.Screen
-        name="PermissionContainer"
-        component={PermissionContainer}
-      />
-
-      <Stack.Screen name="PaymentContainer" component={PaymentContainer} />
-
       <Stack.Screen
         name="AlertScreen"
         component={AlertScreen}
@@ -164,7 +130,7 @@ function Container() {
             },
           }),
         })}
-      /> */}
+      />
     </Stack.Navigator>
   );
 }

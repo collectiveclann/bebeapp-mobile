@@ -1,37 +1,26 @@
 import React from 'react';
 
-import {
-  IntroKesfet,
-  IntroSiparis,
-  IntroZaman,
-  IntroHappy,
-} from '../assets/icons';
+import {Intro1, Intro2, Intro3} from '../assets/icons';
 
 import {SCREEN_WIDTH} from '../assets/constants';
 
 const list = [
   {
-    image: <IntroKesfet size={SCREEN_WIDTH - 100} />,
-    title: 'Çevreni Keşfet',
+    image: <Intro1 size={SCREEN_WIDTH - 100} />,
+    title: 'Bebeğinizin Doğum Tarihini Öğrenin',
     description:
-      'Eve giderken, işe geçerken etrafındaki restoranları incele, en iyisini seç!',
+      'Anne olduğunuzu öğrendiğiniz ilk anda hiç süphesiz en çok doğum yapacağınız tarihi merak edersiniz.',
   },
   {
-    image: <IntroSiparis size={SCREEN_WIDTH - 100} />,
-    title: 'Siparişini Oluştur',
+    image: <Intro2 size={SCREEN_WIDTH - 100} />,
+    title: 'Bebeğinizin Burcunu Öğrenin',
     description:
-      'Seçtiğin restorandan belirlediğin zaman için siparişini oluştur.',
+      'Duygusal mı? Lider Ruhlu mu? Neşeli mi? Kırılgan mı? doğum tarihine göre burç yorumlarına öğrenebilirsiniz.',
   },
   {
-    image: <IntroZaman size={SCREEN_WIDTH - 100} />,
-    title: 'İstediğin Zaman Gel-Al',
-    description:
-      'Siparişin hazır ve seni bekliyor. Belirlediğin saatte Gel-Al.',
-  },
-  {
-    image: <IntroHappy size={SCREEN_WIDTH - 100} />,
-    title: 'Happy Hour',
-    description: "Fırsatları kaçırma! Happy Hour'ları takip et!",
+    image: <Intro3 size={SCREEN_WIDTH - 100} />,
+    title: 'Bebeğinize Kusursuz İsmi Bulun',
+    description: 'İşe ona kusursuz bir isim bularak başlayabilirsiniz!',
   },
 ];
 

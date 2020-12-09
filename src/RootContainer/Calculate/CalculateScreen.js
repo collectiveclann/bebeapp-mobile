@@ -1,18 +1,11 @@
 import * as React from 'react';
-import {
-  View,
-  StyleSheet,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Platform,
-  Keyboard,
-  Dimensions,
-  Animated,
-  ActionSheetIOS,
-  Easing,
-} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import {View, Platform, ActionSheetIOS} from 'react-native';
 import {useSafeArea} from 'react-native-safe-area-context';
+import moment from 'moment';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import Icon from 'react-native-vector-icons/Feather';
+import Animated from 'react-native-reanimated';
+import {onScrollEvent} from 'react-native-redash';
 
 import {
   BaseComponent,
@@ -20,137 +13,136 @@ import {
   LabelComponent,
   InputComponent,
   CenterComponent,
+  TouchableComponent,
 } from '../../assets/components';
+import {SCREEN_WIDTH} from '../../assets/constants';
+import {SYSTEM_COLOR_YELLOW} from '../../assets/colors';
 
 import CalculateImage from './CalculateImage';
 
-import {SCREEN_WIDTH} from '../../assets/constants';
-// import {AppLogoLaunch} from '../../assets/icons';
+const {interpolate, Extrapolate, Value} = Animated;
 
-import moment from 'moment';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-
-const styles = StyleSheet.create({
-  termsButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 999,
-    marginBottom: 20,
-    marginHorizontal: 35,
-  },
-});
-
+const y = new Value(0);
 
 function CalculateScreen({route, navigation}) {
-  const [phone, setPhone] = React.useState();
-  const [loading, setLoading] = React.useState(false);
-  const [method, setMethod] = React.useState('Bir Yöntem Seçin');
-  const [date, setDate] = React.useState(new Date());
-  const [dateSelected, setDateSelected] = React.useState(false);
-  
+  const [type, setType] = React.useState(-1);
+  const [method, setMethod] = React.useState('');
+  const [dateTitle, setDateTitle] = React.useState('');
+  const [isShowLoop, setShowLoop] = React.useState(false);
+
+  const [date, setDate] = React.useState('');
+  const [loop, setLoop] = React.useState('28');
+
   // MARK: - DateTimePickerModal
   const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
 
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
+  // MARK: -
+
+  const IMAGE_HEIGHT = SCREEN_WIDTH * 1.33;
+
+  // MARK: -
+
+  const scale = interpolate(y, {
+    inputRange: [-IMAGE_HEIGHT, 0],
+    outputRange: [2, 1],
+    extrapolateRight: Extrapolate.CLAMP,
+  });
+
+  const position = interpolate(y, {
+    inputRange: [0, SCREEN_WIDTH],
+    outputRange: [0, -IMAGE_HEIGHT],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
+  // MARK: -
 
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
 
   const cancelDatePicker = () => {
-    setDateSelected(false);
     setDatePickerVisibility(false);
   };
 
-  const handleConfirm = (date) => {
-    setDateSelected(true);
-    setDate(date);
+  const handleConfirm = (d) => {
+    setDate(d);
     hideDatePicker();
   };
 
   moment.locale('tr');
-  // MARK: - DateTimePickerModal
-
-  const logoValue = new Animated.Value(0);
 
   // MARK: -
 
   const insets = useSafeArea();
 
-  // MARK: - Keyboar Listeners
-
-  React.useEffect(() => {
-    Keyboard.addListener('keyboardWillShow', keyboardDidShow);
-    Keyboard.addListener('keyboardWillHide', keyboardDidHide);
-
-    return () => {
-      Keyboard.removeListener('keyboardWillShow', keyboardDidShow);
-      Keyboard.removeListener('keyboardWillHide', keyboardDidHide);
-    };
-  });
-
-  const handleNavigationButton = () => {
-    console.log('xxxxx');
-  };
-
-  onFocus = () => {
-    handleMethodButton()
-    // do something
-  }
+  // MARK: -  Buttons
 
   const handleMethodButton = () => {
+    const buttonList = ['Son Adet Dönemim', 'Hamile Kaldığım Tarih', 'Kapat'];
+
     if (Platform.OS === 'ios') {
       ActionSheetIOS.showActionSheetWithOptions(
         {
-          options: ['Kapat', 'Hamile Kaldığım Tarih'],
-          cancelButtonIndex: 0,
+          title: 'Hesaplama Yöntemi',
+          message: 'Hesaplama yapabilmek için lütfen bir yöntem seçin',
+          options: buttonList,
+          cancelButtonIndex: buttonList.length - 1,
         },
         (buttonIndex) => {
           if (buttonIndex === 0) {
-            // Keyboard.dismiss();
-            setMethod('Bir Yöntem Seçin'); 
+            setType(1);
+            setDateTitle('Son Adet Döneminin İlk Günü');
+            setShowLoop(true);
+            setMethod(buttonList[buttonIndex]);
           } else if (buttonIndex === 1) {
-            setMethod('Hamile Kaldığım gün'); 
-            // Keyboard.dismiss();
-          } 
+            setType(2);
+            setDateTitle('Hamile Kaldığım Tarih');
+            setShowLoop(false);
+            setMethod(buttonList[buttonIndex]);
+          }
         },
       );
     } else {
-      
     }
   };
-  
-  const keyboardDidShow = (e) => {
-    Animated.timing(logoValue, {
-      toValue: 1,
-      duration: e.duration - 100,
-      easing: Easing.Keyboard,
-      delay: 0,
-      useNativeDriver: true,
-    }).start(() => {});
-  };
 
-  const keyboardDidHide = (e) => {
-    Animated.timing(logoValue, {
-      toValue: 0,
-      duration: e.duration + 100,
-      easing: Easing.Keyboard,
-      delay: 0,
-      useNativeDriver: true,
-    }).start(() => {});
+  const handleDateButton = () => {
+    setDatePickerVisibility(true);
   };
-
-  const logoOpacity = logoValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0],
-  });
 
   // MARK: - Buttons Life Cycle
 
   async function handleNextButton() {
-    navigation.navigate('DetailScreen');
+    if (type < 0) {
+      navigation.navigate('AlertScreen', {
+        title: 'Yöntem Seçimi',
+        message:
+          'Bebeğinizin doğum tarihini öğrenmek için bir yöntem seçmelisiniz.',
+      });
+
+      return;
+    }
+
+    let duration = '';
+    let result = '';
+
+    if (type === 1) {
+      //
+      duration = moment(date).fromNow();
+      result = moment(date)
+        .add(252 + parseInt(loop), 'days')
+        .calendar();
+    }
+
+    if (type === 2) {
+      duration = moment(date).fromNow();
+      result = moment(date).add(266, 'days').calendar();
+    }
+
+    navigation.navigate('DetailScreen', {
+      duration,
+      result,
+    });
   }
 
   // MARK: - View Lifecycle
@@ -158,13 +150,15 @@ function CalculateScreen({route, navigation}) {
   return (
     <BaseComponent
       {...{route, navigation, style: 'dark'}}
-      safeAreaInsets={true}
       backgroundColor="white">
-      <CenterComponent
+      <Animated.View
         style={{
           position: 'absolute',
+          justifyContent: 'center',
+          alignItems: 'center',
           width: SCREEN_WIDTH,
-          height: SCREEN_WIDTH * 1.33,
+          height: SCREEN_WIDTH * 1.23,
+          transform: [{scale, translateY: position}],
         }}>
         <View
           style={{
@@ -173,29 +167,30 @@ function CalculateScreen({route, navigation}) {
           }}>
           <CalculateImage size={SCREEN_WIDTH - 100} />
         </View>
-      </CenterComponent>
+      </Animated.View>
 
-      <ScrollView
-        contentContainerStyle={{
+      <Animated.ScrollView
+        scrollEventThrottle={1}
+        onScroll={onScrollEvent({y})}
+        style={{
           flex: 1,
           height: '100%',
           width: '100%',
-          justifyContent: 'flex-end',
         }}>
-        <CenterComponent
-          pl={35}
-          pr={35}
-          pt={SCREEN_WIDTH * 0.9}
-          pb={50}
-          onLayout={(e) => {
-            // setLogoHeight(e.nativeEvent.layout.y);
-          }}>
+        <View
+          style={{
+            width: SCREEN_WIDTH,
+            height: SCREEN_WIDTH * 1,
+          }}
+        />
+
+        <CenterComponent pl={35} pr={35}>
           <View
             style={{
               width: '100%',
             }}>
             <LabelComponent
-              fontSize={18}
+              fontSize={22}
               fontWeight="700"
               textAlign="center"
               pl={50}
@@ -204,75 +199,125 @@ function CalculateScreen({route, navigation}) {
               Doğum Yapacağınız Tarihi Hesaplayın
             </LabelComponent>
 
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss()}>
-            <InputComponent
-              icon="heart"
-              placeholder={method}
-              textContentType="emailAddress"
-              autoCompleteType="email"
-              mt={20}
-              onFocus={handleMethodButton}
-              onKeyPress={Keyboard.dismiss()}
-              // value={eMail}
-              // onChangeText={setEMail}
-            />
-            </TouchableWithoutFeedback>
-            
+            <TouchableComponent
+              mt={30}
+              onPress={handleMethodButton}
+              borderRadius={30}
+              overflow="hidden">
+              <InputComponent
+                icon="heart"
+                placeholder={method.length === 0 ? 'Yöntem Seçin' : 'Yöntem'}
+                inputProps={{
+                  editable: false,
+                }}
+                value={method}
+              />
+            </TouchableComponent>
 
-            <InputComponent
-              icon="message-circle"
-              placeholder= {dateSelected ? moment(date).format('DD MMM YYYY') : "Tarih Seçin"}
-              keyboardType="email-address"
-              textContentType="emailAddress"
-              autoCompleteType="email"
-              mt={20}
-              onFocus={showDatePicker}
-              onKeyPress={Keyboard.dismiss()}
-              // onFocus = {this.showPicker.bind(this, 'simple', { date: this.state.simpleDate })}
-              // value={eMail}
-              // onChangeText={setEMail}
-            />
-            
-            <DateTimePickerModal
-              headerTextIOS="Tarih Seçin"
-              cancelTextIOS="Vazgeç"
-              confirmTextIOS="Seç"
-              isVisible={isDatePickerVisible}
-              mode="date"
-              onConfirm={handleConfirm}
-              onCancel={cancelDatePicker}
-            />
+            {method !== '' ? (
+              <TouchableComponent
+                mt={20}
+                onPress={handleDateButton}
+                borderRadius={30}
+                overflow="hidden">
+                <InputComponent
+                  icon="calendar"
+                  placeholder={dateTitle}
+                  inputProps={{
+                    editable: false,
+                  }}
+                  value={date !== '' ? moment(date).format('DD MMM YYYY') : ''}
+                />
+              </TouchableComponent>
+            ) : null}
 
+            {isShowLoop && date !== '' ? (
+              <View
+                style={{
+                  marginTop: 20,
+                  borderRadius: 30,
+                  overflow: 'hidden',
+                }}>
+                <InputComponent
+                  icon="activity"
+                  placeholder="Adet Döngü Süresi"
+                  inputProps={{
+                    editable: false,
+                  }}
+                  value={loop}
+                />
+
+                <View
+                  style={{
+                    position: 'absolute',
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                    zIndex: 99,
+                    width: '100%',
+                    height: '100%',
+                    flexDirection: 'row',
+                    paddingHorizontal: 20,
+                  }}>
+                  <TouchableComponent
+                    onPress={() => {
+                      if (parseInt(loop) > 21) {
+                        setLoop(`${parseInt(loop) - 1}`);
+                      }
+                    }}
+                    style={{
+                      backgroundColor: SYSTEM_COLOR_YELLOW,
+                      height: 32,
+                      width: 32,
+                      borderRadius: 16,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Icon name="minus" size={19} />
+                  </TouchableComponent>
+
+                  <TouchableComponent
+                    onPress={() => {
+                      if (parseInt(loop) < 40) {
+                        setLoop(`${parseInt(loop) + 1}`);
+                      }
+                    }}
+                    style={{
+                      backgroundColor: SYSTEM_COLOR_YELLOW,
+                      height: 32,
+                      width: 32,
+                      borderRadius: 16,
+                      marginLeft: 15,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Icon name="plus" size={19} />
+                  </TouchableComponent>
+                </View>
+              </View>
+            ) : null}
           </View>
 
           <ButtonComponent
             type="success"
             mt={35}
             mb={20}
-            onPress={handleNextButton}
-            loading={loading}>
+            onPress={handleNextButton}>
             Şimdi Öğren
           </ButtonComponent>
         </CenterComponent>
-      </ScrollView>
 
-      {/* <TouchableComponent
-        activeOpacity={0.9}
-        style={styles.termsButton}
-        height={50}
-        borderRadius={25}
-        borderless={true}
-        onPress={() =>
-          navigation.navigate('SupportScreen', {
-            title: 'Sözleşmeler',
-            uri: 'http://www.helalapp.com/sozlesme',
-          })
-        }>
-        <LabelComponent fontSize={12} fontWeight="400" textAlign="center">
-          HelalApp kullanarak &apos;Hizmet Şartları&apos; ve &apos;Gizlilik
-          Politikası&apos;nı kabul etmiş olursun.
-        </LabelComponent>
-      </TouchableComponent> */}
+        <View style={{height: insets.bottom}} />
+      </Animated.ScrollView>
+
+      <DateTimePickerModal
+        headerTextIOS={dateTitle}
+        cancelTextIOS="Vazgeç"
+        confirmTextIOS="Seç"
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirm}
+        onCancel={cancelDatePicker}
+      />
     </BaseComponent>
   );
 }

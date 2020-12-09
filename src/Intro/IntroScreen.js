@@ -8,7 +8,7 @@ import {PageControlJaloro} from 'react-native-chi-page-control';
 import {AuthContext} from '../model';
 
 import {LabelComponent, TouchableComponent} from '../assets/components';
-import {SYSTEM_COLOR_ORANGE} from '../assets/colors';
+import {SYSTEM_COLOR_ORANGE, SYSTEM_COLOR_YELLOW} from '../assets/colors';
 import {SCREEN_WIDTH, SCREEN_PADDING_2} from '../assets/constants';
 
 import IntroList from './IntroModel';
@@ -133,7 +133,7 @@ const IntroScreen = () => {
             animationDuration={300}
             inactiveTransparency={1}
             inactiveTintColor="#dfdfdf"
-            activeTintColor={SYSTEM_COLOR_ORANGE}
+            activeTintColor={SYSTEM_COLOR_YELLOW}
           />
         </View>
 

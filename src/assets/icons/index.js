@@ -35,10 +35,9 @@ export {default as LogoClock} from './Logo-Clock';
 export {default as LogoSecurity} from './Logo-Security';
 export {default as LogoPaymentFail} from './Logo-Payment-Fail';
 
-export {default as IntroZaman} from './Intro-Zaman';
-export {default as IntroHappy} from './Intro-Happy';
-export {default as IntroSiparis} from './Intro-Siparis';
-export {default as IntroKesfet} from './Intro-Kesfet';
+export {default as Intro1} from './Intro-1';
+export {default as Intro2} from './Intro-2';
+export {default as Intro3} from './Intro-3';
 
 export {default as NavGelAl} from './Nav-GelAl';
 export {default as NavVoteBackground} from './Nav-VoteBackground';

@@ -54,13 +54,15 @@ const IntroRow = (props) => {
         fontWeight="700"
         textAlign="center"
         mt={50}
-        color={SYSTEM_COLOR_ORANGE}>
+        ml={50}
+        mr={50}
+        color={SYSTEM_COLOR_BLACK}>
         {item.title}
       </LabelComponent>
 
       <LabelComponent
         fontSize={16}
-        fontWeight="500"
+        fontWeight="400"
         textAlign="center"
         lineHeight="22px"
         color={SYSTEM_COLOR_BLACK}

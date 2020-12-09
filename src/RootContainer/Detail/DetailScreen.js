@@ -6,17 +6,18 @@ import {
   Platform,
   Keyboard,
   Dimensions,
-  Animated,
   Easing,
 } from 'react-native';
+import moment from 'moment';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useSafeArea} from 'react-native-safe-area-context';
+import Animated from 'react-native-reanimated';
+import {onScrollEvent} from 'react-native-redash';
 
 import {
   BaseComponent,
   ButtonComponent,
   LabelComponent,
-  InputComponent,
   CenterComponent,
   TableSectionHeader,
 } from '../../assets/components';
@@ -28,36 +29,57 @@ import {SCREEN_WIDTH} from '../../assets/constants';
 import {SYSTEM_COLOR_GRAY_LIGHT} from '../../assets/colors';
 // import {AppLogoLaunch} from '../../assets/icons';
 
-const styles = StyleSheet.create({
-  termsButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 999,
-    marginBottom: 20,
-    marginHorizontal: 35,
-  },
-});
+import {
+  burcList,
+  burcDetailList,
+  kizNameList,
+  erkekNameList,
+} from './DetailModel';
+
+const {interpolate, Extrapolate, Value} = Animated;
+
+const y = new Value(0);
 
 function CalculateScreen({route, navigation}) {
-  const [phone, setPhone] = React.useState();
-  const [loading, setLoading] = React.useState(false);
-
-  const logoValue = new Animated.Value(0);
+  const insets = useSafeArea();
 
   // MARK: -
 
-  const insets = useSafeArea();
+  const IMAGE_HEIGHT = SCREEN_WIDTH;
 
-  // MARK: - Keyboar Listeners
+  // MARK: -
 
-  const logoOpacity = logoValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0],
+  const position = interpolate(y, {
+    inputRange: [0, SCREEN_WIDTH],
+    outputRange: [0, -IMAGE_HEIGHT],
+    extrapolate: Extrapolate.CLAMP,
   });
 
   // MARK: - Buttons Life Cycle
 
-  async function handleSendButton() {}
+  async function handleBackButton() {
+    navigation.goBack();
+  }
+
+  // MARK: -
+
+  const getBurc = () => {
+    const date = route.params.result.split('.');
+    const day = parseInt(date[0]);
+    const month = parseInt(date[1]) - 1;
+
+    const burc = burcList[month];
+
+    if (day < burc.day) {
+      return burc.min;
+    }
+    return burc.max;
+  };
+
+  function capitalize(str) {
+    const lower = str.toLowerCase();
+    return str.charAt(0).toUpperCase() + lower.slice(1);
+  }
 
   // MARK: - View Lifecycle
 
@@ -65,7 +87,7 @@ function CalculateScreen({route, navigation}) {
     <BaseComponent
       {...{route, navigation, style: 'dark'}}
       backgroundColor="white">
-      <View
+      <Animated.View
         style={{
           position: 'absolute',
           width: SCREEN_WIDTH,
@@ -74,11 +96,15 @@ function CalculateScreen({route, navigation}) {
           backgroundColor: 'red',
           borderBottomRightRadius: 33,
           borderBottomLeftRadius: 33,
+          transform: [{translateY: position}],
         }}>
         <HeaderImage size={SCREEN_WIDTH} />
-      </View>
+      </Animated.View>
 
-      <ScrollView style={{height: '100%', width: '100%'}}>
+      <Animated.ScrollView
+        scrollEventThrottle={1}
+        onScroll={onScrollEvent({y})}
+        style={{height: '100%', width: '100%'}}>
         <CenterComponent
           pl={20}
           pr={20}
@@ -101,7 +127,7 @@ function CalculateScreen({route, navigation}) {
               pl={50}
               pr={50}
               mt={10}>
-              02 Nisan 2021
+              {moment(route.params.result, 'DD.MM.YYYY').format('LL')}
             </LabelComponent>
           </View>
 
@@ -113,13 +139,29 @@ function CalculateScreen({route, navigation}) {
               borderRadius: 23,
               marginTop: 40,
             }}>
-            <TableSectionHeader title="Koç Burcu" m={0} p={0} />
+            <TableSectionHeader
+              title={`${getBurc()} Burcu`}
+              fontSize={19}
+              m={0}
+              p={0}
+            />
 
-            <LabelComponent mt={10} textSize={18} lineHeight="22px">
-              Enerjisi yüksek, odaklı, hevesli ve neşeli bir bebek olacaktır.
-              Hızla odaklanabildiği gibi çabucak dikkati dağılabilir. Bu nedenle
-              oyun oynarken bir nesneye uzun süre odaklanamayabilir. Sabır güçlü
-              olduğu yanlardan biri değildir. Çabuk tepki verebilir.
+            <LabelComponent mt={10} fontSize={17} lineHeight="24px">
+              {burcDetailList[getBurc()].aciklama}
+            </LabelComponent>
+
+            <LabelComponent mt={20} fontSize={18} lineHeight="22px">
+              <LabelComponent fontWeight="700" fontSize={18} lineHeight="22px">
+                Element :
+              </LabelComponent>
+              {` ${burcDetailList[getBurc()].element}`}
+            </LabelComponent>
+
+            <LabelComponent mt={15} fontSize={18} lineHeight="22px">
+              <LabelComponent fontWeight="700" fontSize={18} lineHeight="22px">
+                Gezegen :
+              </LabelComponent>
+              {` ${burcDetailList[getBurc()].gezegen}`}
             </LabelComponent>
           </View>
 
@@ -131,25 +173,28 @@ function CalculateScreen({route, navigation}) {
               borderRadius: 23,
               marginTop: 20,
             }}>
-            <TableSectionHeader
-              title="Geçen Yıl Aynı Tarihte Doğan Bebek Sayısı"
-              m={0}
-              p={0}
-            />
+            <TableSectionHeader title="İsim Önerisi" m={0} p={0} mt={15} />
 
-            <LabelComponent mt={10} textSize={18} lineHeight="22px">
-              10945 bebek aynı tarihte dünyaya geldi.
+            <LabelComponent mt={20} fontSize={18} lineHeight="22px">
+              <LabelComponent fontWeight="700" fontSize={18} lineHeight="22px">
+                Kız :
+              </LabelComponent>
+              {` ${capitalize(
+                kizNameList[
+                  Math.floor(Math.random() * (kizNameList.length - 0 + 1)) + 0
+                ],
+              )}`}
             </LabelComponent>
 
-            <TableSectionHeader
-              title="En Çok Verilen Erkek İsmi"
-              m={0}
-              p={0}
-              mt={15}
-            />
-
-            <LabelComponent mt={10} textSize={18} lineHeight="22px">
-              Kerem
+            <LabelComponent mt={15} fontSize={18} lineHeight="22px">
+              <LabelComponent fontWeight="700" fontSize={18} lineHeight="22px">
+                Erkek :
+              </LabelComponent>
+              {` ${capitalize(
+                erkekNameList[
+                  Math.floor(Math.random() * (kizNameList.length - 0 + 1)) + 0
+                ],
+              )}`}
             </LabelComponent>
           </View>
 
@@ -157,12 +202,11 @@ function CalculateScreen({route, navigation}) {
             type="success"
             mt={35}
             mb={20}
-            onPress={handleSendButton}
-            loading={loading}>
+            onPress={handleBackButton}>
             Yeni Hesapla
           </ButtonComponent>
         </CenterComponent>
-      </ScrollView>
+      </Animated.ScrollView>
     </BaseComponent>
   );
 }

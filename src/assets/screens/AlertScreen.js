@@ -50,7 +50,7 @@ const AlertButton = (props) => {
           justifyContent: 'center',
         }}>
         <LabelComponent
-          fontSize={16}
+          fontSize={17}
           fontWeight={
             props?.type === 'destructive' || props?.type === 'cancel'
               ? '700'
@@ -173,7 +173,8 @@ function AlertComponent({route: {params}, navigation}) {
             <View
               style={{
                 // minHeight: 60,
-                paddingVertical: 20,
+                paddingTop: 20,
+                paddingBottom: 10,
                 // borderColor: 'red',
                 // borderWidth: 1,
                 marginTop: params?.image ? 20 : 0,

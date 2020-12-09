@@ -1,87 +1,44 @@
 import * as React from 'react';
-import {
-  View,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
-  Dimensions,
-  Animated,
-  Easing,
-} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import {View, Text} from 'react-native';
 import {useSafeArea} from 'react-native-safe-area-context';
+import Animated from 'react-native-reanimated';
+import {onScrollEvent} from 'react-native-redash';
 
 import {
   BaseComponent,
   ButtonComponent,
   LabelComponent,
-  TouchableComponent,
-  ShadowComponent,
   CenterComponent,
 } from '../../assets/components';
+import {SCREEN_WIDTH} from '../../assets/constants';
 
 import HomeBackground from './HomeBackground';
 import HomeImage from './HomeImage';
+import CCLogo from './CCLogo';
 
-import {SCREEN_WIDTH} from '../../assets/constants';
-// import {AppLogoLaunch} from '../../assets/icons';
+const {interpolate, Extrapolate, Value} = Animated;
 
-const styles = StyleSheet.create({
-  termsButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 999,
-    marginBottom: 20,
-    marginHorizontal: 35,
-  },
-});
+const y = new Value(0);
 
 function HomeScreen({route, navigation}) {
-  const [phone, setPhone] = React.useState();
-  const [loading, setLoading] = React.useState(false);
-
-  const logoValue = new Animated.Value(0);
+  const insets = useSafeArea();
 
   // MARK: -
 
-  const insets = useSafeArea();
+  const IMAGE_HEIGHT = SCREEN_WIDTH * 1.33;
 
-  // MARK: - Keyboar Listeners
+  // MARK: -
 
-  React.useEffect(() => {
-    Keyboard.addListener('keyboardWillShow', keyboardDidShow);
-    Keyboard.addListener('keyboardWillHide', keyboardDidHide);
-
-    return () => {
-      Keyboard.removeListener('keyboardWillShow', keyboardDidShow);
-      Keyboard.removeListener('keyboardWillHide', keyboardDidHide);
-    };
+  const scale = interpolate(y, {
+    inputRange: [-IMAGE_HEIGHT, 0],
+    outputRange: [2, 1],
+    extrapolateRight: Extrapolate.CLAMP,
   });
 
-  const keyboardDidShow = (e) => {
-    Animated.timing(logoValue, {
-      toValue: 1,
-      duration: e.duration - 100,
-      easing: Easing.Keyboard,
-      delay: 0,
-      useNativeDriver: true,
-    }).start(() => {});
-  };
-
-  const keyboardDidHide = (e) => {
-    Animated.timing(logoValue, {
-      toValue: 0,
-      duration: e.duration + 100,
-      easing: Easing.Keyboard,
-      delay: 0,
-      useNativeDriver: true,
-    }).start(() => {});
-  };
-
-  const logoOpacity = logoValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0],
+  const position = interpolate(y, {
+    inputRange: [0, SCREEN_WIDTH],
+    outputRange: [0, -IMAGE_HEIGHT],
+    extrapolate: Extrapolate.CLAMP,
   });
 
   // MARK: - Buttons Life Cycle
@@ -96,11 +53,14 @@ function HomeScreen({route, navigation}) {
     <BaseComponent
       {...{route, navigation, style: 'dark'}}
       backgroundColor="white">
-      <CenterComponent
+      <Animated.View
         style={{
           position: 'absolute',
+          justifyContent: 'center',
+          alignItems: 'center',
           width: SCREEN_WIDTH,
-          height: SCREEN_WIDTH * 1.33,
+          height: SCREEN_WIDTH * 1.23,
+          transform: [{scale, translateY: position}],
         }}>
         <View
           style={{
@@ -116,9 +76,11 @@ function HomeScreen({route, navigation}) {
           }}>
           <HomeImage size={SCREEN_WIDTH - 100} />
         </View>
-      </CenterComponent>
+      </Animated.View>
 
-      <ScrollView
+      <Animated.ScrollView
+        scrollEventThrottle={1}
+        onScroll={onScrollEvent({y})}
         style={{
           flex: 1,
         }}
@@ -158,30 +120,28 @@ function HomeScreen({route, navigation}) {
             type="success"
             mt={35}
             mb={35}
-            onPress={handleNextButton}
-            loading={loading}>
+            onPress={handleNextButton}>
             Başla
           </ButtonComponent>
-        </CenterComponent>
-      </ScrollView>
 
-      {/* <TouchableComponent
-        activeOpacity={0.9}
-        style={styles.termsButton}
-        height={50}
-        borderRadius={25}
-        borderless={true}
-        onPress={() =>
-          navigation.navigate('SupportScreen', {
-            title: 'Sözleşmeler',
-            uri: 'http://www.helalapp.com/sozlesme',
-          })
-        }>
-        <LabelComponent fontSize={12} fontWeight="400" textAlign="center">
-          HelalApp kullanarak &apos;Hizmet Şartları&apos; ve &apos;Gizlilik
-          Politikası&apos;nı kabul etmiş olursun.
-        </LabelComponent>
-      </TouchableComponent> */}
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingBottom: 10 + insets.bottom,
+            }}>
+            <Text
+              style={{
+                fontSize: 8,
+                color: '#484848',
+              }}>
+              FROM
+            </Text>
+            <View style={{height: 2}} />
+            <CCLogo size={100} />
+          </View>
+        </CenterComponent>
+      </Animated.ScrollView>
     </BaseComponent>
   );
 }
