@@ -8,7 +8,7 @@ import {PageControlJaloro} from 'react-native-chi-page-control';
 import {AuthContext} from '../model';
 
 import {LabelComponent, TouchableComponent} from '../assets/components';
-import {SYSTEM_COLOR_ORANGE, SYSTEM_COLOR_YELLOW} from '../assets/colors';
+import {SYSTEM_COLOR_YELLOW} from '../assets/colors';
 import {SCREEN_WIDTH, SCREEN_PADDING_2} from '../assets/constants';
 
 import IntroList from './IntroModel';

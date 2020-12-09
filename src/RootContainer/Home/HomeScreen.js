@@ -74,7 +74,7 @@ function HomeScreen({route, navigation}) {
             position: 'absolute',
             paddingBottom: 50,
           }}>
-          <HomeImage size={SCREEN_WIDTH - 100} />
+          <HomeImage size={SCREEN_WIDTH - 125} />
         </View>
       </Animated.View>
 

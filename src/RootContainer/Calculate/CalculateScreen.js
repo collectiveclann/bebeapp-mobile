@@ -78,13 +78,15 @@ function CalculateScreen({route, navigation}) {
   // MARK: -  Buttons
 
   const handleMethodButton = () => {
+    const title = 'Hesaplama Yöntemi';
+    const message = 'Hesaplama yapabilmek için lütfen bir yöntem seçin';
     const buttonList = ['Son Adet Dönemim', 'Hamile Kaldığım Tarih', 'Kapat'];
 
     if (Platform.OS === 'ios') {
       ActionSheetIOS.showActionSheetWithOptions(
         {
-          title: 'Hesaplama Yöntemi',
-          message: 'Hesaplama yapabilmek için lütfen bir yöntem seçin',
+          title,
+          message,
           options: buttonList,
           cancelButtonIndex: buttonList.length - 1,
         },
@@ -103,6 +105,31 @@ function CalculateScreen({route, navigation}) {
         },
       );
     } else {
+      navigation.navigate('AlertScreen', {
+        title,
+        message,
+        buttons: [
+          {
+            title: buttonList[0],
+            onPress: () => {
+              setType(1);
+              setDateTitle('Son Adet Döneminin İlk Günü');
+              setShowLoop(true);
+              setMethod(buttonList[0]);
+            },
+          },
+          {
+            title: buttonList[1],
+            onPress: () => {
+              setType(2);
+              setDateTitle('Hamile Kaldığım Tarih');
+              setShowLoop(false);
+              setMethod(buttonList[1]);
+            },
+          },
+        ],
+        cancelButtonTitle: 'Kapat',
+      });
     }
   };
 

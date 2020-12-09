@@ -2,7 +2,7 @@ import React from 'react';
 import {View} from 'react-native';
 
 import {LabelComponent} from '../assets/components';
-import {SYSTEM_COLOR_BLACK, SYSTEM_COLOR_ORANGE} from '../assets/colors';
+import {SYSTEM_COLOR_BLACK} from '../assets/colors';
 import {SCREEN_WIDTH} from '../assets/constants';
 
 const IntroRow = (props) => {

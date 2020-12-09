@@ -6,19 +6,19 @@ import {SCREEN_WIDTH} from '../assets/constants';
 
 const list = [
   {
-    image: <Intro1 size={SCREEN_WIDTH - 100} />,
+    image: <Intro1 size={SCREEN_WIDTH - 125} />,
     title: 'Bebeğinizin Doğum Tarihini Öğrenin',
     description:
       'Anne olduğunuzu öğrendiğiniz ilk anda hiç süphesiz en çok doğum yapacağınız tarihi merak edersiniz.',
   },
   {
-    image: <Intro2 size={SCREEN_WIDTH - 100} />,
+    image: <Intro2 size={SCREEN_WIDTH - 125} />,
     title: 'Bebeğinizin Burcunu Öğrenin',
     description:
       'Duygusal mı? Lider Ruhlu mu? Neşeli mi? Kırılgan mı? doğum tarihine göre burç yorumlarına öğrenebilirsiniz.',
   },
   {
-    image: <Intro3 size={SCREEN_WIDTH - 100} />,
+    image: <Intro3 size={SCREEN_WIDTH - 125} />,
     title: 'Bebeğinize Kusursuz İsmi Bulun',
     description: 'İşe ona kusursuz bir isim bularak başlayabilirsiniz!',
   },
