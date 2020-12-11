@@ -150,6 +150,16 @@ function CalculateScreen({route, navigation}) {
       return;
     }
 
+    if (!date) {
+      navigation.navigate('AlertScreen', {
+        title: 'Tarih Seçimi',
+        message:
+          'Bebeğinizin doğum tarihini öğrenmek için bir tarih seçmelisiniz.',
+      });
+
+      return;
+    }
+
     let duration = '';
     let result = '';
 
@@ -340,8 +350,10 @@ function CalculateScreen({route, navigation}) {
         headerTextIOS={dateTitle}
         cancelTextIOS="Vazgeç"
         confirmTextIOS="Seç"
+        locale='TR'
         isVisible={isDatePickerVisible}
         mode="date"
+        maximumDate={new Date()}
         onConfirm={handleConfirm}
         onCancel={cancelDatePicker}
       />
