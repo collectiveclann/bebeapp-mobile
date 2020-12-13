@@ -17,10 +17,15 @@ import HomeImage from './HomeImage';
 import CCLogo from './CCLogo';
 
 const {interpolate, Extrapolate, Value} = Animated;
-
 const y = new Value(0);
 
 function HomeScreen({route, navigation}) {
+  // MARK: -
+
+  y.setValue(0);
+
+  // MARK: -
+
   const insets = useSafeArea();
 
   // MARK: -
