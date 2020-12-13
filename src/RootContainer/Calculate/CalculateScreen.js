@@ -17,7 +17,6 @@ import {
 } from '../../assets/components';
 import {SCREEN_WIDTH} from '../../assets/constants';
 import {SYSTEM_COLOR_YELLOW} from '../../assets/colors';
-
 import CalculateImage from './CalculateImage';
 
 const {interpolate, Extrapolate, Value} = Animated;
@@ -236,28 +235,36 @@ function CalculateScreen({route, navigation}) {
               Doğum Yapacağınız Tarihi Hesaplayın
             </LabelComponent>
 
-            <TouchableComponent
-              mt={30}
-              onPress={handleMethodButton}
-              borderRadius={30}
-              overflow="hidden">
+            
+            <View>
               <InputComponent
                 icon="heart"
                 placeholder={method.length === 0 ? 'Yöntem Seçin' : 'Yöntem'}
                 inputProps={{
                   editable: false,
                 }}
+                onPress={handleMethodButton}
                 value={method}
               />
-            </TouchableComponent>
+
+              <TouchableComponent
+                mt={-64}
+                height={64}
+                onPress={handleMethodButton}
+                borderRadius={30}
+                // backgroundColor='red'
+                overflow="hidden">
+              </TouchableComponent>
+              
+            </View>
 
             {method !== '' ? (
-              <TouchableComponent
-                mt={20}
-                onPress={handleDateButton}
-                borderRadius={30}
-                overflow="hidden">
+
+              <View>
+
                 <InputComponent
+                  // width={20}
+                  mt={20}
                   icon="calendar"
                   placeholder={dateTitle}
                   inputProps={{
@@ -265,7 +272,16 @@ function CalculateScreen({route, navigation}) {
                   }}
                   value={date !== '' ? moment(date).format('DD MMM YYYY') : ''}
                 />
-              </TouchableComponent>
+
+                <TouchableComponent
+                  mt={-64}
+                  height={64}
+                  onPress={handleDateButton}
+                  borderRadius={30}
+                  // backgroundColor='red'
+                  overflow="hidden">
+                </TouchableComponent>
+              </View>
             ) : null}
 
             {isShowLoop && date !== '' ? (
