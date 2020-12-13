@@ -38,11 +38,12 @@ import {
 
 const {interpolate, Extrapolate, Value} = Animated;
 
-const y = new Value(0);
 
 function CalculateScreen({route, navigation}) {
   const insets = useSafeArea();
 
+
+  const y = new Value(0);
   // MARK: -
 
   const IMAGE_HEIGHT = SCREEN_WIDTH;
