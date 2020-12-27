@@ -25,8 +25,15 @@ target 'BebeApp' do
   use_flipper!
   post_install do |installer|
     flipper_post_install(installer)
+	installer.pods_project.targets.each do |target|
+    	target.build_configurations.each do |config|
+     	config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
+        config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'
+     end
+    end
   end
 end
+
 
 target 'BebeApp-tvOS' do
   # Pods for BebeApp-tvOS
@@ -36,3 +43,5 @@ target 'BebeApp-tvOS' do
     # Pods for testing
   end
 end
+
+
